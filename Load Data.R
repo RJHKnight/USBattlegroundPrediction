@@ -2,6 +2,8 @@ library(readr)
 
 load_data <- function()
 {
+  cat(paste("Updating web data."))
+
   results <- read_csv("https://alex.github.io/nyt-2020-election-scraper/battleground-state-changes.csv")
 
   results  <- results %>%
