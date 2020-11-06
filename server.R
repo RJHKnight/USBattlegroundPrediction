@@ -7,6 +7,7 @@ library(stringr)
 library(tidyr)
 library(purrr)
 library(lubridate)
+library(plotly)
 
 source("./Load Data.R", local = TRUE)
 source("./Summary Stats.R")
@@ -19,8 +20,8 @@ shinyServer(function(input, output, session) {
                           checkFunc = function() {floor_date(now(), "30 second")},
                           valueFunc = load_data)
 
-    output$mainPlot <- renderPlot({
-        ggplot(results(), aes(pct_votes, vote_differential_rep)) +
+    output$mainPlot <- renderPlotly({
+        main_plot <- ggplot(results(), aes(pct_votes, vote_differential_rep)) +
             geom_point(alpha = 0.6) +
             geom_smooth(method = "lm", se = FALSE) +
             geom_line(y = 0, colour = "red", linetype = "dashed") +
@@ -29,12 +30,13 @@ shinyServer(function(input, output, session) {
             facet_wrap(~ state, scale = "free",ncol = 1) +
             theme_bw()
 
+        ggplotly(main_plot)
+
     })
 
     summary_stats <- reactive({get_summary_stats(results())})
 
     output$stats <- renderFormattable({
-
       basic_info <- summary_stats() %>%
         mutate(r.squared = scales::percent(r.squared),
                prediction_100 = scales::number(prediction_100, big.mark = ",")
