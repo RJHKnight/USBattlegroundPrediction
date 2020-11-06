@@ -15,7 +15,7 @@ results <- load_data()
 
 shinyServer(function(input, output, session) {
 
-  results <- reactivePoll(1000, session,
+  results <- reactivePoll(10000, session,
                           checkFunc = function() {floor_date(now(), "30 second")},
                           valueFunc = load_data)
 
